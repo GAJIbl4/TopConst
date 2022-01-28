@@ -3,7 +3,7 @@ import json
 from PyQt6 import QtWidgets, QtGui
 from PyQt6.QtCore import Qt
 from MainWindow import Ui_MainWindow
-from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox
+from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox, QWidgetAction
 
 
 class AlignDelegate(QtWidgets.QStyledItemDelegate):  # Делегат центрирования по ячейкам
@@ -29,6 +29,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setupUi(self)
 
+        # Настройки меню
+        self.open.setShortcut('Ctrl+O')
+        self.open.triggered.connect(self.menu_open)
+
         # Настройки таблицы
         table = self.tableWidget
         table.setFocusPolicy(Qt.FocusPolicy.NoFocus)  # Убирает выделение элемента при нажатии
@@ -40,12 +44,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         beam_list = [3, 3, 3, 3, 4]
         self.create_table(8, 16, beam_list, 2, 1, 1)
-        self.topology = self.open_file('Hennesy.txt')
-
-        # self.Open.triggered.connect(self.menu_open())
+        self.topology = self.open_file("Hennessy.txt")
 
     def menu_open(self):  # Не работает
-        file = QtWidgets.QFileDialog.getOpenFileName(self, "Open Image", "/home/jana", "Text Files (*.txt)")
+        file = QtWidgets.QFileDialog.getOpenFileName(self, "Open Topology", "", "Text Files (*.txt)")[0]
         self.topology = self.open_file(str(file))
 
     def add_beam(self, col):  # Добавляет одну балку
@@ -90,7 +92,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Очищаем таблицу от старых значений
         self.clear_table()
-
         row_count += 1
         col_count += 1
 
@@ -102,11 +103,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.add_beams(beam_list)
 
     def open_file(self, file):
-        left_list = self.listWidget
+        self.clear_table()
+        self.listWidget.clear()
+        self.listWidget_2.clear()
+        MainWindow.setWindowTitle(self, file)
         with open(file) as content:
             topology = json.load(content)
         for key in topology['alley']:
-            left_list.addItem(key)
+            self.listWidget.addItem(key)
         return topology
 
     def item_clicked(self):
@@ -129,7 +133,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for col in range(table.columnCount()):
             table.setItemDelegateForColumn(col, delegate)
         table.resizeColumnsToContents()
-
         table.setRowCount(0)
         table.setColumnCount(0)
 

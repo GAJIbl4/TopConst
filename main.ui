@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>973</width>
-    <height>335</height>
+    <height>323</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Topology Constructor</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTableWidget" name="tableWidget">
@@ -35,11 +35,11 @@
     <attribute name="horizontalHeaderVisible">
      <bool>false</bool>
     </attribute>
-    <attribute name="horizontalHeaderMinimumSectionSize">
-     <number>2</number>
-    </attribute>
     <attribute name="horizontalHeaderDefaultSectionSize">
      <number>30</number>
+    </attribute>
+    <attribute name="horizontalHeaderMinimumSectionSize">
+     <number>2</number>
     </attribute>
     <attribute name="verticalHeaderVisible">
      <bool>false</bool>
@@ -116,19 +116,22 @@
      <x>0</x>
      <y>0</y>
      <width>973</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="Open"/>
+    <addaction name="open"/>
    </widget>
    <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="Open">
+  <action name="open">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Открыть</string>
    </property>
