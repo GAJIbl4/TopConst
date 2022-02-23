@@ -4,7 +4,7 @@ from PyQt6 import QtWidgets, QtGui
 from PyQt6.QtCore import Qt
 from MainWindow import Ui_MainWindow
 from create_alley import Ui_create_alley
-from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox
+from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox, QFileDialog
 
 
 class AlignDelegate(QtWidgets.QStyledItemDelegate):  # Делегат центрирования по ячейкам
@@ -25,49 +25,14 @@ class WhiteColorDelegate(QtWidgets.QStyledItemDelegate):  # Делегат цв�
         option.backgroundBrush = QtGui.QColor('white')
 
 
-class CreateAlleyWindow(QtWidgets.QMainWindow, Ui_create_alley):
-    def __init__(self, parent=None):
-        super(CreateAlleyWindow, self).__init__(parent)
-        self.setupUi(self)
-
-        self.cancel_btn.clicked.connect(lambda: self.close())
-        self.create_alley_btn.clicked.connect(self.create_alley)
-
-    def create_alley(self):
-        table = self.single_create_table
-        empty_flag = True
-        for i in range(table.rowCount() - 1):
-            if table.item(i, 1).text():
-                empty_flag = False
-            else:
-                empty_flag = True
-                break
-
-        if empty_flag is True:
-            QMessageBox.warning(self, "Error", "Fields are empty")
-        else:
-            alley_index = table.item(0, 1).text()
-            rows = table.item(0, 2).text()
-            cols = table.item(0, 3).text()
-            start_level = table.item(0, 4).text()
-            start_cell = table.item(0, 5).text()
-            count_of_barcodes = table.item(0, 6).text()
-            local_direction = table.item(0, 7).text()
-            alley_index = 113
-            self.topology['alley'][str(alley_index)] = {'rows': rows,
-                                                        'columns': cols,
-                                                        'list_of_balks': [3 for _ in range(cols // 3)],
-                                                        'extra_cells': [],
-                                                        'count_of_barcodes': count_of_barcodes,
-                                                        'start_level': start_level,
-                                                        'start_cell': (cols - 1) * ((alley_index + 1) % 2) + 1,
-                                                        'local_direction': alley_index % 2}
-
-
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        super(TopConst, self).__init__(*args, **kwargs)
+        self.new_alley = None
         self.setupUi(self)
+        self.left_list = self.listWidget
+        self.topology = None
+        self.topology_file = None
 
         # Настройки меню
         self.open.setShortcut('Ctrl+O')
@@ -85,11 +50,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.create_button.clicked.connect(self.create_alley_window)
         self.open.triggered.connect(self.menu_open)
 
-        self.topology = self.open_file("Hennessy.txt")
-
     def menu_open(self):
-        file = QtWidgets.QFileDialog.getOpenFileName(self, "Open Topology", "", "Text Files (*.txt)")[0]
-        self.topology = self.open_file(str(file))
+        self.topology_file = QFileDialog.getOpenFileName(self, "Open Topology", "", "Text Files (*.txt)")[0]
+        self.topology = self.open_file(str(self.topology_file))
 
     def add_beam(self, col):  # Добавляет одну балку
         table = self.tableWidget
@@ -124,7 +87,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Вертикальные заголовки
         row_num = start_level
-        for row in range(row_count-1, 0, -1):
+        for row in range(row_count - 1, 0, -1):
             table.setItem(row, 0, QTableWidgetItem(str(row_num)))
             row_num += 1
 
@@ -149,7 +112,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.listWidget.clear()
         self.listWidget_2.clear()
 
-        MainWindow.setWindowTitle(self, file)
+        TopConst.setWindowTitle(self, file)
         with open(file) as content:
             topology = json.load(content)
         for key in topology['alley']:
@@ -195,17 +158,97 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             row = left_list.selectedIndexes()[0].row()
             self.topology["alley"].pop(alley)
             left_list.takeItem(row)
+            with open(self.topology_file, 'w') as fd:
+                json.dump(self.topology, fd)
+            fd.close()
 
     def create_alley_window(self):
-        dialog = CreateAlleyWindow(self)
-        dialog.show()
+        self.new_alley = CreateAlleyWindow(self)
+        self.new_alley.show()
+
+
+class CreateAlleyWindow(QtWidgets.QDialog, Ui_create_alley):
+    def __init__(self, parent):
+        super(CreateAlleyWindow, self).__init__(parent)
+        self.setupUi(self)
+
+        self.vbox = QtWidgets.QHBoxLayout(self)
+        self.radio1 = QtWidgets.QRadioButton("Слева")
+        self.radio2 = QtWidgets.QRadioButton("Справа")
+        self.radio1.setChecked(True)
+        self.vbox.addWidget(self.radio1)
+        self.vbox.addWidget(self.radio2)
+
+        self.local_dir_box = QtWidgets.QGroupBox(self)
+        self.local_dir_box.setLayout(self.vbox)
+        self.local_dir_box.setStyleSheet("QGroupBox {background-color: white}")
+        self.single_create_table.setCellWidget(7, 1, self.local_dir_box)
+
+        self.buttonBox.rejected.connect(lambda: self.close())
+        self.buttonBox.accepted.connect(self.create_alley)
+
+    def create_alley(self):
+        table = self.single_create_table
+        empty_flag = True
+        for i in range(table.rowCount() - 1):
+            if table.item(i, 1).text():
+                empty_flag = False
+            else:
+                empty_flag = True
+                break
+
+        if empty_flag is True:
+            QMessageBox.warning(self, "Error", "Некоторые поля пусты")
+        else:
+            alley_index = table.item(0, 1).text()
+            rows = int(table.item(1, 1).text())
+            cols = int(table.item(2, 1).text())
+            start_level = int(table.item(4, 1).text())
+            count_of_barcodes = int(table.item(6, 1).text())
+            if self.radio1.isChecked():
+                local_direction = 0
+                start_cell = int(table.item(5, 1).text()) + int(table.item(2, 1).text()) - 1
+            elif self.radio2.isChecked():
+                local_direction = 1
+                start_cell = int(table.item(5, 1).text())
+            else:
+                local_direction = 0
+                start_cell = 1
+            list_of_balks = eval(table.item(3, 1).text())
+            if sum(list_of_balks) != cols:
+                QMessageBox.warning(self, "Error", "Ошибка в количестве балок!")
+            else:
+                self.parent().topology['alley'][str(alley_index)] = {'rows': rows,
+                                                                     'columns': cols,
+                                                                     'list_of_balks': list_of_balks,
+                                                                     'extra_cells': [],
+                                                                     'count_of_barcodes': count_of_barcodes,
+                                                                     'start_level': start_level,
+                                                                     'start_cell': start_cell,
+                                                                     'local_direction': local_direction}
+                with open(self.parent().topology_file, 'w') as fd:
+                    json.dump(self.parent().topology, fd)
+                fd.close()
+
+                items = []
+                for x in range(self.parent().left_list.count()-1):
+                    items.append(self.parent().left_list.item(x).text())
+                if alley_index not in items:
+                    self.parent().left_list.addItem(alley_index)
+                self.close()
 
 
 def main():
+    sys.excepthook = my_excepthook
     app = QtWidgets.QApplication(sys.argv)
-    window = MainWindow()
+    window = TopConst()
     window.show()
     app.exec()
+
+
+def my_excepthook(type_error, value, t_back):
+    QMessageBox.critical(TopConst(), "CRITICAL ERROR", str(value))
+    sys.__excepthook__(type_error, value, t_back)
 
 
 if __name__ == '__main__':

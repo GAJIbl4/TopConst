@@ -23,10 +23,10 @@
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>193</x>
       <y>50</y>
-      <width>600</width>
-      <height>272</height>
+      <width>598</width>
+      <height>261</height>
      </rect>
     </property>
     <property name="textElideMode">
@@ -98,7 +98,7 @@
    <widget class="QListWidget" name="listWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>13</x>
       <y>50</y>
       <width>170</width>
       <height>231</height>
@@ -120,16 +120,16 @@
       <x>800</x>
       <y>50</y>
       <width>161</width>
-      <height>271</height>
+      <height>261</height>
      </rect>
     </property>
    </widget>
    <widget class="QTableWidget" name="upper_table">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>13</x>
       <y>10</y>
-      <width>951</width>
+      <width>948</width>
       <height>31</height>
      </rect>
     </property>
@@ -137,6 +137,9 @@
      <font>
       <pointsize>10</pointsize>
      </font>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::LeftToRight</enum>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -179,6 +182,26 @@
     <column/>
     <column/>
     <column/>
+    <item row="0" column="0">
+     <property name="flags">
+      <set>ItemIsUserCheckable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="0" column="1">
+     <property name="flags">
+      <set>ItemIsUserCheckable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="0" column="2">
+     <property name="flags">
+      <set>ItemIsUserCheckable|ItemIsEnabled</set>
+     </property>
+    </item>
+    <item row="0" column="3">
+     <property name="flags">
+      <set>ItemIsUserCheckable|ItemIsEnabled</set>
+     </property>
+    </item>
    </widget>
    <widget class="QPushButton" name="create_button">
     <property name="geometry">
@@ -213,7 +236,7 @@
      <x>0</x>
      <y>0</y>
      <width>973</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
