@@ -108,7 +108,7 @@ class Ui_create_alley(object):
         self.tabWidget.addTab(self.multy_alley, "")
 
         self.retranslateUi(create_alley)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(create_alley)
 
     def retranslateUi(self, create_alley):
