@@ -44,11 +44,24 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         table.setItemDelegate(delegate)  # таблицы по центру
         self.upper_table.setItemDelegate(delegate)
 
+        # Настройка верхней таблицы
+        up_table = self.upper_table
+        value = 60
+        header = (up_table.width() - (3 * value)) // 3
+        up_table.setColumnWidth(0, header)
+        up_table.setColumnWidth(1, value)
+        up_table.setColumnWidth(2, header)
+        up_table.setColumnWidth(3, value)
+        up_table.setColumnWidth(4, header)
+        up_table.setColumnWidth(5, value)
+        up_table.setSpan(2, 1, 1, 5)
+
         # Привязка функций
         self.delete_button.clicked.connect(self.delete_alley)
         self.listWidget.clicked.connect(self.item_clicked)
         self.create_button.clicked.connect(self.create_alley_window)
         self.open.triggered.connect(self.menu_open)
+        self.alley_change_button.clicked.connect(self.alley_change)
 
     def menu_open(self):
         self.topology_file = QFileDialog.getOpenFileName(self, "Open Topology", "", "Text Files (*.txt)")[0]
@@ -118,28 +131,37 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         for key in topology['alley']:
             self.listWidget.addItem(key)
 
-        self.upper_table.setRowCount(0)
-        self.upper_table.setRowCount(1)
-        table.setItem(0, 0, QTableWidgetItem("Photo: " + str(topology['photo'])))
-        table.setItem(0, 1, QTableWidgetItem("Uniq bar: " + str(topology['uniq_bar'])))
-        table.setItem(0, 2, QTableWidgetItem("Extra bar: " + str(topology['extra_bar'])))
-        table.setItem(0, 3, QTableWidgetItem("Extra cells: " + str(topology['extra_cells'])))
+        # Очистка верхней таблицы
+        table.setItem(0, 1, QTableWidgetItem(""))
+        table.setItem(0, 3, QTableWidgetItem(""))
+        table.setItem(0, 5, QTableWidgetItem(""))
+        table.setItem(1, 1, QTableWidgetItem(""))
+        table.setItem(1, 3, QTableWidgetItem(""))
+        table.setItem(1, 5, QTableWidgetItem(""))
+        table.setItem(2, 1, QTableWidgetItem(""))
 
         return topology
 
     def item_clicked(self):
         right_list = self.listWidget_2
+        table = self.upper_table
         item = self.listWidget.currentItem()
         alley = self.topology['alley'][item.text()]
         self.create_table(alley['rows'], alley['columns'], alley['list_of_balks'], alley['start_level'],
                           alley['start_cell'], alley['local_direction'])
+
+        table.setItem(0, 1, QTableWidgetItem(str(alley['rows'])))
+        table.setItem(0, 3, QTableWidgetItem(str(alley['columns'])))
+        table.setItem(0, 5, QTableWidgetItem(str(alley['start_level'])))
+        table.setItem(1, 1, QTableWidgetItem(str(alley['start_cell'])))
+        table.setItem(1, 3, QTableWidgetItem(str(alley['count_of_barcodes'])))
+        table.setItem(1, 5, QTableWidgetItem(str(alley['local_direction'])))
+        table.setItem(2, 1, QTableWidgetItem(str(alley['list_of_balks'])))
         right_list.clear()
-        right_list.addItem("Rows = " + str(alley['rows']))
-        right_list.addItem("Columns = " + str(alley['columns']))
-        right_list.addItem("Start level = " + str(alley['start_level']))
-        right_list.addItem("Start cell = " + str(alley['start_cell']))
-        right_list.addItem("Count of barcodes: " + str(alley['count_of_barcodes']))
-        right_list.addItem("Local direction = " + str(alley['local_direction']))
+        right_list.addItem("Photo = " + str(self.topology['photo']))
+        right_list.addItem("Uniq bar = " + str(self.topology['uniq_bar']))
+        right_list.addItem("Extra bar = " + str(self.topology['extra_bar']))
+        right_list.addItem("Extra cells = " + str(self.topology['extra_cells']))
 
     def clear_table(self):
         table = self.tableWidget
@@ -161,6 +183,29 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
             with open(self.topology_file, 'w') as fd:
                 json.dump(self.topology, fd)
             fd.close()
+
+    def alley_change(self):
+        left_list = self.listWidget
+        up_table = self.upper_table
+        if left_list.selectedItems():
+            current_alley = self.topology['alley'][left_list.selectedItems()[0].text()]
+            if sum(eval(up_table.item(2, 1).text())) < int(up_table.item(0, 3).text()):
+                QMessageBox.warning(self, "Error", "Не хватает балок!")
+            elif sum(eval(up_table.item(2, 1).text())) > int(up_table.item(0, 3).text()):
+                QMessageBox.warning(self, "Error", "Не хватает ячеек!")
+            else:
+                current_alley['rows'] = int(up_table.item(0, 1).text())
+                current_alley['columns'] = int(up_table.item(0, 3).text())
+                current_alley['start_level'] = int(up_table.item(0, 5).text())
+                current_alley['start_cell'] = int(up_table.item(1, 1).text())
+                current_alley['count_of_barcodes'] = int(up_table.item(1, 3).text())
+                current_alley['local_direction'] = int(up_table.item(1, 5).text())
+                current_alley['list_of_balks'] = eval(up_table.item(2, 1).text())
+                self.create_table(current_alley['rows'], current_alley['columns'], current_alley['list_of_balks'],
+                                  current_alley['start_level'], current_alley['start_cell'],
+                                  current_alley['local_direction'])
+        else:
+            QMessageBox.information(self, "Не вжухай!", "Не выбрана аллея!")
 
     def create_alley_window(self):
         self.new_alley = CreateAlleyWindow(self)
