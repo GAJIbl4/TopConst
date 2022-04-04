@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>430</height>
+    <height>440</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,24 +19,28 @@
   <property name="minimumSize">
    <size>
     <width>1000</width>
-    <height>430</height>
+    <height>440</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>1000</width>
-    <height>430</height>
+    <height>440</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Topology Constructor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>logo.jpg</normaloff>logo.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
       <x>193</x>
-      <y>140</y>
+      <y>143</y>
       <width>797</width>
       <height>261</height>
      </rect>
@@ -49,6 +53,12 @@
     </property>
     <property name="gridStyle">
      <enum>Qt::SolidLine</enum>
+    </property>
+    <property name="rowCount">
+     <number>9</number>
+    </property>
+    <property name="columnCount">
+     <number>30</number>
     </property>
     <attribute name="horizontalHeaderVisible">
      <bool>false</bool>
@@ -74,6 +84,14 @@
       </color>
      </property>
     </row>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
     <column>
      <property name="text">
       <string>1</string>
@@ -106,15 +124,43 @@
       <string>1</string>
      </property>
     </column>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
+    <column/>
    </widget>
    <widget class="QListWidget" name="listWidget">
     <property name="geometry">
      <rect>
       <x>13</x>
-      <y>140</y>
+      <y>143</y>
       <width>170</width>
       <height>231</height>
      </rect>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::ActionsContextMenu</enum>
     </property>
     <property name="horizontalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -122,11 +168,23 @@
     <property name="sizeAdjustPolicy">
      <enum>QAbstractScrollArea::AdjustIgnored</enum>
     </property>
+    <property name="editTriggers">
+     <set>QAbstractItemView::DoubleClicked</set>
+    </property>
+    <property name="dragEnabled">
+     <bool>false</bool>
+    </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::ExtendedSelection</enum>
+    </property>
     <property name="textElideMode">
      <enum>Qt::ElideMiddle</enum>
     </property>
     <property name="viewMode">
      <enum>QListView::ListMode</enum>
+    </property>
+    <property name="sortingEnabled">
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QTableWidget" name="upper_table">

@@ -1,7 +1,8 @@
 import sys
 import json
-from PyQt6 import QtWidgets, QtGui
-from PyQt6.QtCore import Qt
+
+import PyQt6.QtGui
+from PyQt6 import QtWidgets, QtGui, QtCore
 from MainWindow import Ui_MainWindow
 from create_alley import Ui_create_alley
 from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox, QFileDialog
@@ -10,7 +11,7 @@ from PyQt6.QtWidgets import QTableWidgetItem, QMessageBox, QFileDialog
 class AlignDelegate(QtWidgets.QStyledItemDelegate):  # Делегат центрирования по ячейкам
     def initStyleOption(self, option, index):
         super(AlignDelegate, self).initStyleOption(option, index)
-        option.displayAlignment = Qt.AlignmentFlag.AlignCenter
+        option.displayAlignment = QtCore.Qt.AlignmentFlag.AlignCenter
 
 
 class ColorDelegate(QtWidgets.QStyledItemDelegate):  # Делегат цвета балки
@@ -33,13 +34,16 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         self.left_list = self.listWidget
         self.topology = None
         self.topology_file = None
+        self.current_alley = None
+        self.buffer = {'alley': {}}
+        self.paste_flag = False
 
         # Настройки меню
         self.open.setShortcut('Ctrl+O')
 
         # Настройки основной таблицы
         table = self.tableWidget
-        table.setFocusPolicy(Qt.FocusPolicy.NoFocus)  # Убирает выделение элемента при нажатии
+        table.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)  # Убирает выделение элемента при нажатии
         delegate = AlignDelegate(table)  # Выравнивание
         table.setItemDelegate(delegate)  # таблицы по центру
         self.upper_table.setItemDelegate(delegate)
@@ -62,15 +66,55 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Привязка функций
         self.delete_button.clicked.connect(self.delete_alley)
-        self.listWidget.clicked.connect(self.item_clicked)
+        self.listWidget.itemClicked.connect(self.item_clicked)
+        self.listWidget.itemChanged.connect(self.item_changed)
         self.create_button.clicked.connect(self.create_alley_window)
         self.open.triggered.connect(self.menu_open)
         self.alley_change_button.clicked.connect(self.alley_change)
         self.check_box.toggled.connect(self.photo_checkbox_change)
 
-    def menu_open(self):
+        # Настройка контекстного меню левого списка
+        self.act_copy = PyQt6.QtGui.QAction("Copy")
+        self.act_paste = PyQt6.QtGui.QAction("Paste")
+        self.act_copy.triggered.connect(self.copy_alley)
+        self.act_paste.triggered.connect(self.paste_alley)
+        self.listWidget.addAction(self.act_copy)
+        self.listWidget.addAction(self.act_paste)
+
+    def warning(self):
+        QMessageBox.warning(self, "WARNING", "Всё работает!")
+
+    def copy_alley(self):
+        if self.listWidget.selectedItems():
+            for alley in self.listWidget.selectedItems():
+                alley_name = alley.text()
+                self.buffer['alley'][alley_name] = self.topology['alley'][alley_name]
+
+    def paste_alley(self):
+        if self.buffer:
+            self.paste_flag = True
+            i = self.listWidget.count()
+
+            for alley_name in self.buffer['alley'].keys():
+                self.topology['alley'][alley_name + '_copy'] = self.buffer['alley'][alley_name]
+                self.listWidget.addItem(alley_name + '_copy')
+                item = self.listWidget.item(i)
+                item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+                item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
+                i += 1
+
+            self.paste_flag = False
+
+            with open(self.topology_file, 'w') as fd:
+                json.dump(self.topology, fd)
+            fd.close()
+
+    def menu_open(self):  # Кнопка "Открыть" в меню
         self.topology_file = QFileDialog.getOpenFileName(self, "Open Topology", "", "Text Files (*.txt)")[0]
-        self.topology = self.open_file(str(self.topology_file))
+        if self.topology_file:
+            self.topology = self.open_file(str(self.topology_file))
+        else:
+            return
 
     def add_beam(self, col):  # Добавляет одну балку
         table = self.tableWidget
@@ -129,14 +173,16 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         self.clear_table()
         self.listWidget.clear()
 
-        TopConst.setWindowTitle(self, file)
+        TopConst.setWindowTitle(self, file)  # В названии окна будет местоположение файла с топологией
         with open(file) as content:
             topology = json.load(content)
-        for key in topology['alley']:
+        i = 0
+        for key in topology['alley']:  # Закидываем аллеи в список слева
             self.listWidget.addItem(key)
-
-        for n in range(self.listWidget.count()):
-            self.listWidget.item(n).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            item = self.listWidget.item(i)
+            item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+            item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
+            i += 1
 
         # Очистка верхней таблицы
         table.setItem(0, 1, QTableWidgetItem(""))
@@ -149,18 +195,18 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         table.setItem(3, 3, QTableWidgetItem(str(topology['uniq_bar'])))
 
         if topology['photo'] == 2:
-            self.check_box.setCheckState(Qt.CheckState.Checked)
+            self.check_box.setCheckState(QtCore.Qt.CheckState.Checked)
         elif topology['photo'] == 0:
-            self.check_box.setCheckState(Qt.CheckState.Unchecked)
+            self.check_box.setCheckState(QtCore.Qt.CheckState.Unchecked)
         else:
-            self.check_box.setCheckState(Qt.CheckState.Unchecked)
-            topology['photo'] = 0
+            self.check_box.setCheckState(QtCore.Qt.CheckState.Unchecked)
 
         return topology
 
     def item_clicked(self):
         table = self.upper_table
         item = self.listWidget.currentItem()
+        self.current_alley = item.text()
         alley = self.topology['alley'][item.text()]
         self.create_table(alley['rows'], alley['columns'], alley['list_of_balks'], alley['start_level'],
                           alley['start_cell'], alley['local_direction'])
@@ -172,6 +218,15 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         table.setItem(1, 3, QTableWidgetItem(str(alley['count_of_barcodes'])))
         table.setItem(1, 5, QTableWidgetItem(str(alley['local_direction'])))
         table.setItem(2, 1, QTableWidgetItem(str(alley['list_of_balks'])))
+
+    def item_changed(self):
+        if self.listWidget.currentItem() and not self.paste_flag:
+            alley = self.topology['alley'][self.current_alley]
+            self.topology["alley"].pop(self.current_alley)
+            self.topology['alley'][self.listWidget.currentItem().text()] = alley
+            with open(self.topology_file, 'w') as fd:
+                json.dump(self.topology, fd)
+            fd.close()
 
     def clear_table(self):
         table = self.tableWidget
@@ -229,9 +284,19 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
             elif self.check_box.isChecked() is False:
                 self.topology['photo'] = 0
 
+            with open(self.topology_file, 'w') as fd:
+                json.dump(self.topology, fd)
+            fd.close()
+
     def create_alley_window(self):
-        self.new_alley = CreateAlleyWindow(self)
-        self.new_alley.show()
+        if not self.topology_file:
+            QMessageBox.warning(self, "Error", "Не выбран файл с топологией")
+        else:
+            if not self.new_alley:
+                self.new_alley = CreateAlleyWindow(self)
+                self.new_alley.show()
+            else:
+                self.new_alley.show()
 
 
 class CreateAlleyWindow(QtWidgets.QDialog, Ui_create_alley):
@@ -249,63 +314,57 @@ class CreateAlleyWindow(QtWidgets.QDialog, Ui_create_alley):
         self.local_dir_box = QtWidgets.QGroupBox(self)
         self.local_dir_box.setLayout(self.vbox)
         self.local_dir_box.setStyleSheet("QGroupBox {background-color: white}")
-        self.single_create_table.setCellWidget(7, 1, self.local_dir_box)
+        self.new_pallet_table.setCellWidget(7, 1, self.local_dir_box)
 
-        self.buttonBox.rejected.connect(lambda: self.close())
-        self.buttonBox.accepted.connect(self.create_alley)
+        self.alley_buttonbox.rejected.connect(self.close)
+        self.alley_buttonbox.accepted.connect(self.create_alley)
 
     def create_alley(self):
-        table = self.single_create_table
-        empty_flag = True
+        table = self.new_pallet_table
         for i in range(table.rowCount() - 1):
-            if table.item(i, 1).text():
-                empty_flag = False
-            else:
-                empty_flag = True
-                break
+            if not table.item(i, 1).text():
+                QMessageBox.warning(self, "Error", "Некоторые поля пусты")
+                return
 
-        if empty_flag is True:
-            QMessageBox.warning(self, "Error", "Некоторые поля пусты")
+        local_direction = 0
+        start_cell = 1
+
+        alley_index = table.item(0, 1).text()
+        rows = int(table.item(1, 1).text())
+        cols = int(table.item(2, 1).text())
+        list_of_balks = eval(table.item(3, 1).text())
+        start_level = int(table.item(4, 1).text())
+        count_of_barcodes = int(table.item(6, 1).text())
+
+        if self.radio1.isChecked():
+            local_direction = 0
+            start_cell = int(table.item(5, 1).text()) + int(table.item(2, 1).text()) - 1
+        elif self.radio2.isChecked():
+            local_direction = 1
+            start_cell = int(table.item(5, 1).text())
+
+        if sum(list_of_balks) != cols:
+            QMessageBox.warning(self, "Error", "Ошибка в количестве балок и/или в количестве паллет")
         else:
-            alley_index = table.item(0, 1).text()
-            rows = int(table.item(1, 1).text())
-            cols = int(table.item(2, 1).text())
-            start_level = int(table.item(4, 1).text())
-            count_of_barcodes = int(table.item(6, 1).text())
-            if self.radio1.isChecked():
-                local_direction = 0
-                start_cell = int(table.item(5, 1).text()) + int(table.item(2, 1).text()) - 1
-            elif self.radio2.isChecked():
-                local_direction = 1
-                start_cell = int(table.item(5, 1).text())
-            else:
-                local_direction = 0
-                start_cell = 1
-            list_of_balks = eval(table.item(3, 1).text())
-            if sum(list_of_balks) != cols:
-                QMessageBox.warning(self, "Error", "Ошибка в количестве балок!")
-            else:
-                self.parent().topology['alley'][str(alley_index)] = {'rows': rows,
-                                                                     'columns': cols,
-                                                                     'list_of_balks': list_of_balks,
-                                                                     'extra_cells': [],
-                                                                     'count_of_barcodes': count_of_barcodes,
-                                                                     'start_level': start_level,
-                                                                     'start_cell': start_cell,
-                                                                     'local_direction': local_direction}
-                with open(self.parent().topology_file, 'w') as fd:
-                    json.dump(self.parent().topology, fd)
-                fd.close()
+            self.parent().topology['alley'][str(alley_index)] = {'rows': rows,
+                                                                 'columns': cols,
+                                                                 'list_of_balks': list_of_balks,
+                                                                 'extra_cells': [],
+                                                                 'count_of_barcodes': count_of_barcodes,
+                                                                 'start_level': start_level,
+                                                                 'start_cell': start_cell,
+                                                                 'local_direction': local_direction}
+            with open(self.parent().topology_file, 'w') as fd:
+                json.dump(self.parent().topology, fd)
+            fd.close()
 
-                items = []
-                for x in range(self.parent().left_list.count()-1):
-                    items.append(self.parent().left_list.item(x).text())
-                if alley_index not in items:
-                    self.parent().left_list.addItem(alley_index)
-                    n = self.parent().left_list.count()
-                    self.parent().left_list.item(n-1).setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            items = [self.parent().left_list.item(x).text() for x in range(0, self.parent().left_list.count())]
+            if alley_index not in items:
+                self.parent().left_list.addItem(alley_index)
+                n = self.parent().left_list.count()
+                self.parent().left_list.item(n - 1).setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
-                self.close()
+            self.close()
 
 
 def main():

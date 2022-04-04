@@ -2,12 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="131b44f6-5652-478b-a54d-a84e942391ed" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/TopConst.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/TopConst.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Hennessy.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Hennessy.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/MainWindow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TopConst.spec" beforeDir="false" afterPath="$PROJECT_DIR$/TopConst.spec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/create_alley.py" beforeDir="false" afterPath="$PROJECT_DIR$/create_alley.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/create_alley_dialog.ui" beforeDir="false" afterPath="$PROJECT_DIR$/create_alley_dialog.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.ui" beforeDir="false" afterPath="$PROJECT_DIR$/main.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Пример топологии/Kotanyi.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Пример топологии/Kotanyi.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
