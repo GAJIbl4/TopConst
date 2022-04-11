@@ -36,7 +36,6 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         self.topology_file = None
         self.current_alley = None
         self.buffer = {'alley': {}}
-        self.paste_flag = False
 
         # Настройки меню
         self.open.setShortcut('Ctrl+O')
@@ -92,7 +91,7 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def paste_alley(self):
         if self.buffer:
-            self.paste_flag = True
+            self.listWidget.itemChanged.disconnect(self.item_changed)
             i = self.listWidget.count()
 
             for alley_name in self.buffer['alley'].keys():
@@ -103,11 +102,10 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
                 item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
                 i += 1
 
-            self.paste_flag = False
-
             with open(self.topology_file, 'w') as fd:
                 json.dump(self.topology, fd)
             fd.close()
+            self.listWidget.itemChanged.connect(self.item_changed)
 
     def menu_open(self):  # Кнопка "Открыть" в меню
         self.topology_file = QFileDialog.getOpenFileName(self, "Open Topology", "", "Text Files (*.txt)")[0]
@@ -220,7 +218,7 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         table.setItem(2, 1, QTableWidgetItem(str(alley['list_of_balks'])))
 
     def item_changed(self):
-        if self.listWidget.currentItem() and not self.paste_flag:
+        if self.listWidget.currentItem():
             alley = self.topology['alley'][self.current_alley]
             self.topology["alley"].pop(self.current_alley)
             self.topology['alley'][self.listWidget.currentItem().text()] = alley
@@ -303,68 +301,52 @@ class CreateAlleyWindow(QtWidgets.QDialog, Ui_create_alley):
     def __init__(self, parent):
         super(CreateAlleyWindow, self).__init__(parent)
         self.setupUi(self)
-
-        self.vbox = QtWidgets.QHBoxLayout(self)
-        self.radio1 = QtWidgets.QRadioButton("Слева")
-        self.radio2 = QtWidgets.QRadioButton("Справа")
-        self.radio1.setChecked(True)
-        self.vbox.addWidget(self.radio1)
-        self.vbox.addWidget(self.radio2)
-
-        self.local_dir_box = QtWidgets.QGroupBox(self)
-        self.local_dir_box.setLayout(self.vbox)
-        self.local_dir_box.setStyleSheet("QGroupBox {background-color: white}")
-        self.new_pallet_table.setCellWidget(7, 1, self.local_dir_box)
+        self.settings_dict = None
+        self.alley_index = None
 
         self.alley_buttonbox.rejected.connect(self.close)
-        self.alley_buttonbox.accepted.connect(self.create_alley)
+        self.alley_buttonbox.accepted.connect(self.accept_button)
 
-    def create_alley(self):
+    def accept_button(self):
         table = self.new_pallet_table
+
         for i in range(table.rowCount() - 1):
             if not table.item(i, 1).text():
                 QMessageBox.warning(self, "Error", "Некоторые поля пусты")
                 return
 
-        local_direction = 0
-        start_cell = 1
+        self.parse_settings()
 
-        alley_index = table.item(0, 1).text()
-        rows = int(table.item(1, 1).text())
-        cols = int(table.item(2, 1).text())
-        list_of_balks = eval(table.item(3, 1).text())
-        start_level = int(table.item(4, 1).text())
-        count_of_barcodes = int(table.item(6, 1).text())
-
-        if self.radio1.isChecked():
-            local_direction = 0
-            start_cell = int(table.item(5, 1).text()) + int(table.item(2, 1).text()) - 1
-        elif self.radio2.isChecked():
-            local_direction = 1
-            start_cell = int(table.item(5, 1).text())
-
-        if sum(list_of_balks) != cols:
+        if sum(self.settings_dict['list_of_balks']) != self.settings_dict['columns']:
             QMessageBox.warning(self, "Error", "Ошибка в количестве балок и/или в количестве паллет")
+            return
         else:
-            self.parent().topology['alley'][str(alley_index)] = {'rows': rows,
-                                                                 'columns': cols,
-                                                                 'list_of_balks': list_of_balks,
-                                                                 'extra_cells': [],
-                                                                 'count_of_barcodes': count_of_barcodes,
-                                                                 'start_level': start_level,
-                                                                 'start_cell': start_cell,
-                                                                 'local_direction': local_direction}
-            with open(self.parent().topology_file, 'w') as fd:
-                json.dump(self.parent().topology, fd)
-            fd.close()
-
+            self.parent().topology['alley'][self.alley_index] = self.settings_dict
             items = [self.parent().left_list.item(x).text() for x in range(0, self.parent().left_list.count())]
-            if alley_index not in items:
-                self.parent().left_list.addItem(alley_index)
+            if self.alley_index not in items:
+                self.parent().listWidget.itemChanged.disconnect(self.parent().item_changed)
+
+                self.parent().left_list.addItem(self.alley_index)
                 n = self.parent().left_list.count()
                 self.parent().left_list.item(n - 1).setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
+                self.parent().listWidget.itemChanged.connect(self.parent().item_changed)
+
             self.close()
+
+    def parse_settings(self):
+        table = self.new_pallet_table
+
+        self.alley_index = table.item(0, 1).text()
+        cols = int(table.item(2, 1).text())
+        self.settings_dict = {'rows': int(table.item(1, 1).text()),
+                              'columns': cols,
+                              'list_of_balks': eval(table.item(3, 1).text()),
+                              'start_level': int(table.item(4, 1).text()),
+                              'start_cell': int(table.item(5, 1).text()),
+                              'count_of_barcodes': int(table.item(6, 1).text()),
+                              'local_direction': int(table.item(7, 1).text()),
+                              'extra_cells': []}
 
 
 def main():

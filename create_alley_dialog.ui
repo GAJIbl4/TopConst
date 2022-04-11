@@ -94,7 +94,7 @@
    <column/>
    <item row="0" column="0">
     <property name="text">
-     <string>Название аллеи</string>
+     <string>Alley name</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
@@ -116,7 +116,7 @@
    </item>
    <item row="1" column="0">
     <property name="text">
-     <string>Количество ярусов</string>
+     <string>Rows</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
@@ -138,7 +138,7 @@
    </item>
    <item row="2" column="0">
     <property name="text">
-     <string>Количество паллет</string>
+     <string>Cols</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
@@ -160,7 +160,7 @@
    </item>
    <item row="3" column="0">
     <property name="text">
-     <string>Балки</string>
+     <string>List of balks</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
@@ -182,7 +182,7 @@
    </item>
    <item row="4" column="0">
     <property name="text">
-     <string>Стартовый уровень</string>
+     <string>Start level</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
@@ -204,7 +204,7 @@
    </item>
    <item row="5" column="0">
     <property name="text">
-     <string>Стартовая ячейка</string>
+     <string>Start cell</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
@@ -226,7 +226,7 @@
    </item>
    <item row="6" column="0">
     <property name="text">
-     <string>Количество ШК</string>
+     <string>Count of barcodes</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
@@ -245,7 +245,7 @@
    </item>
    <item row="7" column="0">
     <property name="text">
-     <string>Ориентация стеллажа</string>
+     <string>Local direction</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
@@ -253,7 +253,7 @@
    </item>
    <item row="7" column="1">
     <property name="text">
-     <string>0</string>
+     <string>1</string>
     </property>
     <property name="textAlignment">
      <set>AlignCenter</set>
