@@ -39,6 +39,7 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # Настройки меню
         self.open.setShortcut('Ctrl+O')
+        self.create_topology.setShortcut('Ctrl+N')
 
         # Настройки основной таблицы
         table = self.tableWidget
@@ -75,6 +76,8 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         # Настройка контекстного меню левого списка
         self.act_copy = PyQt6.QtGui.QAction("Copy")
         self.act_paste = PyQt6.QtGui.QAction("Paste")
+        self.act_copy.setShortcut('Ctrl+C')
+        self.act_paste.setShortcut('Ctrl+V')
         self.act_copy.triggered.connect(self.copy_alley)
         self.act_paste.triggered.connect(self.paste_alley)
         self.listWidget.addAction(self.act_copy)
@@ -93,13 +96,16 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.buffer:
             self.listWidget.itemChanged.disconnect(self.item_changed)
             i = self.listWidget.count()
+            items = [self.left_list.item(x).text() for x in range(i)]
 
             for alley_name in self.buffer['alley'].keys():
                 self.topology['alley'][alley_name + '_copy'] = self.buffer['alley'][alley_name]
-                self.listWidget.addItem(alley_name + '_copy')
-                item = self.listWidget.item(i)
-                item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-                item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
+
+                if alley_name + '_copy' not in items:
+                    self.listWidget.addItem(alley_name + '_copy')
+                    item = self.listWidget.item(i)
+                    item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+                    item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
                 i += 1
 
             with open(self.topology_file, 'w') as fd:
@@ -175,12 +181,16 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         with open(file) as content:
             topology = json.load(content)
         i = 0
+        # Вырубаем обработчик событий от греха подальше, точнее от ложных срабатываний
+        self.listWidget.itemChanged.disconnect(self.item_changed)
         for key in topology['alley']:  # Закидываем аллеи в список слева
             self.listWidget.addItem(key)
             item = self.listWidget.item(i)
             item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
             item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
             i += 1
+        # Включаем обработчик событий обратно
+        self.listWidget.itemChanged.connect(self.item_changed)
 
         # Очистка верхней таблицы
         table.setItem(0, 1, QTableWidgetItem(""))
@@ -218,6 +228,7 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         table.setItem(2, 1, QTableWidgetItem(str(alley['list_of_balks'])))
 
     def item_changed(self):
+        print('CHANGED')
         if self.listWidget.currentItem():
             alley = self.topology['alley'][self.current_alley]
             self.topology["alley"].pop(self.current_alley)
@@ -239,10 +250,11 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
     def delete_alley(self):
         left_list = self.listWidget
         if left_list.selectedItems():
-            alley = left_list.selectedItems()[0].text()
-            row = left_list.selectedIndexes()[0].row()
-            self.topology["alley"].pop(alley)
-            left_list.takeItem(row)
+            for item in left_list.selectedItems():
+                alley = item.text()
+                row = left_list.row(item)
+                self.topology["alley"].pop(alley)
+                left_list.takeItem(row)
             with open(self.topology_file, 'w') as fd:
                 json.dump(self.topology, fd)
             fd.close()
@@ -331,6 +343,10 @@ class CreateAlleyWindow(QtWidgets.QDialog, Ui_create_alley):
                 self.parent().left_list.item(n - 1).setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
 
                 self.parent().listWidget.itemChanged.connect(self.parent().item_changed)
+
+            with open(self.parent().topology_file, 'w') as fd:
+                json.dump(self.parent().topology, fd)
+            fd.close()
 
             self.close()
 

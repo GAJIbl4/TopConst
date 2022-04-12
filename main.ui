@@ -523,6 +523,7 @@
      <string>Файл</string>
     </property>
     <addaction name="open"/>
+    <addaction name="create_topology"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -531,7 +532,12 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Открыть</string>
+    <string>Открыть топологию</string>
+   </property>
+  </action>
+  <action name="create_topology">
+   <property name="text">
+    <string>Создать топологию</string>
    </property>
   </action>
  </widget>

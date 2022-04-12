@@ -180,7 +180,10 @@ class Ui_MainWindow(object):
         self.open = QtGui.QAction(MainWindow)
         self.open.setCheckable(False)
         self.open.setObjectName("open")
+        self.create_topology = QtGui.QAction(MainWindow)
+        self.create_topology.setObjectName("create_topology")
         self.menu.addAction(self.open)
+        self.menu.addAction(self.create_topology)
         self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -227,7 +230,8 @@ class Ui_MainWindow(object):
         self.delete_button.setText(_translate("MainWindow", "Удалить"))
         self.alley_change_button.setText(_translate("MainWindow", "ВЖУХ"))
         self.menu.setTitle(_translate("MainWindow", "Файл"))
-        self.open.setText(_translate("MainWindow", "Открыть"))
+        self.open.setText(_translate("MainWindow", "Открыть топологию"))
+        self.create_topology.setText(_translate("MainWindow", "Создать топологию"))
 
 
 if __name__ == "__main__":
