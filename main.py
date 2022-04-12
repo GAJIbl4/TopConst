@@ -83,11 +83,9 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         self.listWidget.addAction(self.act_copy)
         self.listWidget.addAction(self.act_paste)
 
-    def warning(self):
-        QMessageBox.warning(self, "WARNING", "Всё работает!")
-
     def copy_alley(self):
         if self.listWidget.selectedItems():
+            self.buffer = {'alley': {}}
             for alley in self.listWidget.selectedItems():
                 alley_name = alley.text()
                 self.buffer['alley'][alley_name] = self.topology['alley'][alley_name]
@@ -128,13 +126,18 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         delegate = ColorDelegate(table)
         table.setItemDelegateForColumn(col, delegate)
 
-    def add_beams(self, beam_list):  # Добавляет ВСЕ балки
+    def add_beams(self, beam_list, local_dir):  # Добавляет ВСЕ балки
         count = 1
         self.add_beam(count)
 
-        for n in beam_list:
-            count += n + 1
-            self.add_beam(count)
+        if local_dir == 0:
+            for n in beam_list:
+                count += n + 1
+                self.add_beam(count)
+        else:
+            for n in beam_list[::-1]:
+                count += n + 1
+                self.add_beam(count)
 
     def table_headers(self, col_count, row_count, start_level, start_cell, local_direction):
         table = self.tableWidget
@@ -170,7 +173,7 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         table.setColumnCount(col_count)
 
         self.table_headers(col_count, row_count, start_level, start_cell, local_direction)
-        self.add_beams(beam_list)
+        self.add_beams(beam_list, local_direction)
 
     def open_file(self, file):
         table = self.upper_table
