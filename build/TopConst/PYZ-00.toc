@@ -1,4 +1,4 @@
-('C:\\GitHub\\TopConst\\build\\Topconst\\PYZ-00.pyz',
+('C:\\GitHub\\TopConst\\build\\TopConst\\PYZ-00.pyz',
  [('os',
    'c:\\users\\windows\\appdata\\local\\programs\\python\\python39\\lib\\os.py',
    'PYMODULE'),
