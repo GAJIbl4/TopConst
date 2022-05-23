@@ -204,7 +204,7 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "1"))
         item = self.tableWidget.horizontalHeaderItem(4)
         item.setText(_translate("MainWindow", "1"))
-        self.listWidget.setSortingEnabled(True)
+        self.listWidget.setSortingEnabled(False)
         __sortingEnabled = self.upper_table.isSortingEnabled()
         self.upper_table.setSortingEnabled(False)
         item = self.upper_table.item(0, 0)

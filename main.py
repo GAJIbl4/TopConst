@@ -243,6 +243,7 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
             with open(self.topology_file, 'w') as fd:
                 json.dump(self.topology, fd)
             fd.close()
+            self.listWidget.sortItems(order=QtCore.Qt.SortOrder.AscendingOrder)
 
     def clear_table(self):
         table = self.tableWidget
