@@ -3,22 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="131b44f6-5652-478b-a54d-a84e942391ed" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TopConst.spec" beforeDir="false" afterPath="$PROJECT_DIR$/TopConst.spec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/MainWindow.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/TopConst/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/Analysis-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/TopConst/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/EXE-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/TopConst/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/PKG-00.toc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/TopConst/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/PYZ-00.pyz" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/TopConst/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/PYZ-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/TopConst/TopConst.exe.manifest" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/TopConst.exe.manifest" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/TopConst/TopConst.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/TopConst.pkg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/TopConst/Tree-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/Tree-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/TopConst/Tree-01.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/Tree-01.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/TopConst/Tree-02.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/Tree-02.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/TopConst/base_library.zip" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/base_library.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/TopConst/warn-TopConst.txt" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/warn-TopConst.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/TopConst/xref-TopConst.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/xref-TopConst.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/TopConst.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/TopConst.exe" beforeDir="false" afterPath="$PROJECT_DIR$/dist/TopConst.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.ui" beforeDir="false" afterPath="$PROJECT_DIR$/main.ui" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
