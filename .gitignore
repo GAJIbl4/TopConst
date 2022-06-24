@@ -2,3 +2,4 @@
 .idea/workspace.xml
 __pycache__/create_alley.cpython-39.pyc
 .idea/workspace.xml
+*.pyc

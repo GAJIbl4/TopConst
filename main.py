@@ -31,7 +31,7 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         super(TopConst, self).__init__(*args, **kwargs)
         self.new_alley = None
         self.setupUi(self)
-        self.left_list = self.listWidget
+        self.left_list = self.left_list
         self.topology = None
         self.topology_file = None
         self.current_alley = None
@@ -59,15 +59,14 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         up_table.setColumnWidth(4, header)
         up_table.setColumnWidth(5, value)
         up_table.setSpan(2, 1, 1, 5)
-        up_table.setSpan(3, 3, 1, 3)
         self.check_box = QtWidgets.QCheckBox()
         self.check_box.setStyleSheet("margin-left:24%;")
         up_table.setCellWidget(3, 1, self.check_box)
 
         # Привязка функций
         self.delete_button.clicked.connect(self.delete_alley)
-        self.listWidget.itemClicked.connect(self.item_clicked)
-        self.listWidget.itemChanged.connect(self.item_changed)
+        self.left_list.itemClicked.connect(self.item_clicked)
+        self.left_list.itemChanged.connect(self.item_changed)
         self.create_button.clicked.connect(self.create_alley_window)
         self.open.triggered.connect(self.menu_open)
         self.alley_change_button.clicked.connect(self.alley_change)
