@@ -41,6 +41,9 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         self.open.setShortcut('Ctrl+O')
         self.create_topology.setShortcut('Ctrl+N')
 
+        # Настройки списка
+        self.listWidget.setSortingEnabled(False)
+
         # Настройки основной таблицы
         table = self.tableWidget
         table.setFocusPolicy(QtCore.Qt.FocusPolicy.NoFocus)  # Убирает выделение элемента при нажатии
@@ -187,10 +190,11 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
         self.listWidget.itemChanged.disconnect(self.item_changed)
         for key in topology['alley']:  # Закидываем аллеи в список слева
             self.listWidget.addItem(key)
+        self.listWidget.sortItems(QtCore.Qt.SortOrder.AscendingOrder)
+        for i in range(self.listWidget.count()):
             item = self.listWidget.item(i)
             item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
             item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
-            i += 1
         # Включаем обработчик событий обратно
         self.listWidget.itemChanged.connect(self.item_changed)
 
@@ -238,6 +242,7 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
             with open(self.topology_file, 'w') as fd:
                 json.dump(self.topology, fd)
             fd.close()
+            self.listWidget.sortItems(order=QtCore.Qt.SortOrder.AscendingOrder)
 
     def clear_table(self):
         table = self.tableWidget
