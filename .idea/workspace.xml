@@ -3,12 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="131b44f6-5652-478b-a54d-a84e942391ed" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MainWindow.py" beforeDir="false" afterPath="$PROJECT_DIR$/MainWindow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/TopConst/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/Analysis-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/TopConst/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/EXE-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/TopConst/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/PKG-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/TopConst/TopConst.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/build/TopConst/TopConst.pkg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dist/TopConst.exe" beforeDir="false" afterPath="$PROJECT_DIR$/dist/TopConst.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.ui" beforeDir="false" afterPath="$PROJECT_DIR$/main.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Пример топологии/Hennessy.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Пример топологии/Hennessy.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Пример топологии/Kotanyi.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Пример топологии/Kotanyi.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/еуые.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

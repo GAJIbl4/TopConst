@@ -267,9 +267,11 @@ class TopConst(QtWidgets.QMainWindow, Ui_MainWindow):
 
                 if alley_name + '_copy' not in items:
                     self.left_list.addItem(alley_name + '_copy')
-                    item = self.left_list.item(self.left_list.count() - 1)
+                    item = self.left_list.findItems(alley_name + '_copy', QtCore.Qt.MatchFlag.MatchExactly)[0]
                     item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-                    item.setFlags(item.flags() | QtCore.Qt.ItemFlag.ItemIsEditable)
+                    item.setFlags(QtCore.Qt.ItemFlag.ItemIsSelectable |
+                                  QtCore.Qt.ItemFlag.ItemIsEditable |
+                                  QtCore.Qt.ItemFlag.ItemIsEnabled)
 
             with open(self.topology_file, 'w') as fd:
                 json.dump(self.topology, fd)
@@ -530,11 +532,11 @@ class CreateAlleyWindow(QtWidgets.QDialog, Ui_create_alley):
                 self.parent().left_list.itemChanged.disconnect(self.parent().item_changed)
 
                 self.parent().left_list.addItem(self.alley_index)
-                n = self.parent().left_list.count()
-                self.parent().left_list.item(n - 1).setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-                self.parent().left_list.item(n - 1).setFlags(QtCore.Qt.ItemFlag.ItemIsEditable |
-                                                             QtCore.Qt.ItemFlag.ItemIsEnabled |
-                                                             QtCore.Qt.ItemFlag.ItemIsSelectable)
+                item = self.parent().left_list.findItems(self.alley_index, QtCore.Qt.MatchFlag.MatchExactly)[0]
+                item.setTextAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+                item.setFlags(QtCore.Qt.ItemFlag.ItemIsEditable |
+                              QtCore.Qt.ItemFlag.ItemIsEnabled |
+                              QtCore.Qt.ItemFlag.ItemIsSelectable)
                 self.parent().left_list.itemChanged.connect(self.parent().item_changed)
 
             with open(self.parent().topology_file, 'w') as fd:
